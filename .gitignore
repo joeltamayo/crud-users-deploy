@@ -1,0 +1,35 @@
+# Composer dependencies
+/vendor
+/composer.lock
+
+# Directorio writable 
+writable/*
+!writable/.gitkeep
+
+# Archivos de entorno 
+.env
+.env.*
+!.env.example
+
+# Node 
+node_modules/
+
+# Archivos de log
+*.log
+
+# Cache y compilados
+*.cache
+
+# Archivos de backup
+*.bak
+*.tmp
+
+# IDEs y editores
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
