@@ -1,5 +1,5 @@
 <head>
-    <title>Lista de Usuarios</title>
+    <title>Lista de usuarios</title>
 </head>
 
 <?= $this->include('header'); ?>
