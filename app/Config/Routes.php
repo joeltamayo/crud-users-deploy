@@ -10,6 +10,7 @@ use CodeIgniter\Router\RouteCollection;
 //$routes->match(['GET', 'POST'], 'publication/edit/(:segment)', 'Publication::edit/$1');
 //$routes->GET('/publication/delete/(:segment)', 'Publication::delete/$1');
 
+$routes->get('/', 'Home::index');
 
 $routes->get('/user/create', 'User::create'); // Ruta para el formulario de creación de usuario
 $routes->get('/user/list', 'User::list'); // Ruta para el listado de usuarios
