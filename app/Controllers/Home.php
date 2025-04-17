@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Controllers;
+use CodeIgniter\HTTP\RedirectResponse;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index(): RedirectResponse
     {
-        return view('user/list');
+        return redirect()->to('/user/list');
     }
 }

@@ -5,10 +5,6 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-//$routes->GET('publication', 'Publication::index');
-//$routes->POST('/publication/add', 'Publication::add');
-//$routes->match(['GET', 'POST'], 'publication/edit/(:segment)', 'Publication::edit/$1');
-//$routes->GET('/publication/delete/(:segment)', 'Publication::delete/$1');
 
 $routes->get('/', 'Home::index');
 
@@ -20,4 +16,3 @@ $routes->post('/user/create', 'User::create'); // Ruta para enviar los datos del
 $routes->post('/user/edit/(:num)', 'User::edit/$1'); // Ruta para enviar los datos del formulario de edición
 
 $routes->get('/user/details/(:num)', 'User::details/$1'); // Ruta para enviar los datos del formulario de edición
-
