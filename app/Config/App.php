@@ -24,9 +24,9 @@ class App extends BaseConfig
     public function __construct()
     {
         parent::__construct();
-        
-        // Obtiene la URL desde las variables de entorno (o usa localhost por defecto)
-        $this->baseURL = getenv('app.baseURL') ?: 'http://localhost:8080/';
+
+        // Construye automáticamente la URL base
+        $this->baseURL = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/';
     }
 
     public bool $useDotEnv = true;
@@ -67,7 +67,7 @@ class App extends BaseConfig
      */
     public string $uriProtocol = 'REQUEST_URI';
 
-    public string $permittedURIChars = 'a-z 0-9~%.:_\-' ;
+    public string $permittedURIChars = 'a-z 0-9~%.:_\-';
 
     public string $defaultLocale = 'en';
 
