@@ -7,7 +7,7 @@ writable/*
 !writable/.gitkeep
 
 # Archivos de entorno 
-//.env
+.env
 .env.*
 !.env.example
 
