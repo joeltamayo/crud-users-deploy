@@ -18,10 +18,10 @@ class Database extends Config
 
         $this->default = [
             'DSN'      => '',
-            'hostname' => env('DB_HOST', 'localhost'),
-            'username' => env('DB_USER', 'root'),
-            'password' => env('DB_PASS', ''),
-            'database' => env('DB_NAME', 'ci4'),
+            'hostname' => getenv('DB_HOST') ?: 'localhost',  // Usando getenv para obtener la variable de entorno
+            'username' => getenv('DB_USER') ?: 'root',      // Usando getenv para obtener la variable de entorno
+            'password' => getenv('DB_PASS') ?: '',          // Usando getenv para obtener la variable de entorno
+            'database' => getenv('DB_NAME') ?: 'ci4',       // Usando getenv para obtener la variable de entorno
             'DBDriver' => 'MySQLi',
             'DBPrefix' => '',
             'pConnect' => false,
@@ -33,7 +33,7 @@ class Database extends Config
             'compress' => false,
             'strictOn' => false,
             'failover' => [],
-            'port'     => env('DB_PORT', 3306),
+            'port'     => getenv('DB_PORT') ?: 3306,        // Usando getenv para obtener la variable de entorno
             'numberNative' => false,
             'foundRows'    => false,
             'dateFormat'   => [
