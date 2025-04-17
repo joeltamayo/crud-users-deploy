@@ -33,7 +33,7 @@ class Database extends Config
             'compress' => false,
             'strictOn' => false,
             'failover' => [],
-            'port'     => getenv('DB_PORT') ?: 3306,        // Usando getenv para obtener la variable de entorno
+            'port'     => getenv('DB_PORT') ? (int) getenv('DB_PORT') : 3306,       // Usando getenv para obtener la variable de entorno
             'numberNative' => false,
             'foundRows'    => false,
             'dateFormat'   => [
