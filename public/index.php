@@ -47,13 +47,11 @@ if (getcwd() . DIRECTORY_SEPARATOR !== FCPATH) {
 // This is the line that might need to be changed, depending on your folder structure.
 require realpath(__DIR__ . '/../app/Config/Paths.php');
 // ^^^ Change this line if you move your application folder
-
+var_dump(realpath(__DIR__ . '/../app/Config/Paths.php'));
+exit;
 $paths = new Config\Paths();
 
 // LOAD THE FRAMEWORK BOOTSTRAP FILE
 require $paths->systemDirectory . '/Boot.php';
 
 exit(CodeIgniter\Boot::bootWeb($paths));
-
-var_dump(realpath(__DIR__ . '/../app/Config/Paths.php'));
-exit;
