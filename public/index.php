@@ -54,3 +54,6 @@ $paths = new Config\Paths();
 require $paths->systemDirectory . '/Boot.php';
 
 exit(CodeIgniter\Boot::bootWeb($paths));
+
+var_dump(realpath(__DIR__ . '/../app/Config/Paths.php'));
+exit;
