@@ -3,7 +3,7 @@ FROM php:8.1-apache
 # Instala extensiones necesarias
 RUN apt-get update && apt-get install -y \
     libicu-dev libonig-dev libzip-dev zip unzip \
-    && docker-php-ext-install intl mbstring pdo pdo_mysql zip \
+    && docker-php-ext-install intl mbstring pdo pdo_mysql mysqli zip \
     && a2enmod rewrite
 
 # Cambiar DocumentRoot a public/
