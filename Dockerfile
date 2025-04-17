@@ -20,11 +20,9 @@ RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf \
 # Copia todo el proyecto
 COPY . /var/www/html
 
-RUN chown -R www-data:www-data /var/www/html/writable \
+# Asignar permisos al proyecto y asegurar que writable es escribible
+RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/writable
-
-# Asignar permisos
-RUN chown -R www-data:www-data /var/www/html
 
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
