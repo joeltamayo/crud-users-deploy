@@ -1,36 +1,40 @@
+# Usamos la imagen oficial de PHP + Apache
 FROM php:8.1-apache
 
-# Instala extensiones necesarias
-RUN apt-get update && apt-get install -y \
-    libicu-dev libonig-dev libzip-dev zip unzip \
+# 1. Instala las librerías del sistema y extensiones PHP necesarias
+RUN apt-get update \
+    && apt-get install -y libicu-dev libonig-dev libzip-dev zip unzip \
     && docker-php-ext-install intl mbstring pdo pdo_mysql mysqli zip \
     && a2enmod rewrite
 
-# Cambiar DocumentRoot a public/
-RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
+# 2. Ajusta el DocumentRoot de Apache a public/
+RUN sed -ri \
+        -e 's!DocumentRoot /var/www/html!DocumentRoot /var/www/html/public!g' \
+        -e 's!<Directory /var/www/>!<Directory /var/www/html/public>!g' \
+        /etc/apache2/sites-available/*.conf
 
-# Evita la advertencia del ServerName
+# 3. Permitir que .htaccess funcione (AllowOverride All)
+RUN printf "\n<Directory /var/www/html/public>\n    AllowOverride All\n</Directory>\n" \
+    >> /etc/apache2/apache2.conf
+
+# 4. Fija el ServerName para quitar la advertencia
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Cambiar el puerto de escucha de Apache a 8080
+# 5. Cambia Apache para que escuche en el puerto 8080
 RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf \
     && sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf
 
-# Copia todo el proyecto
+# 6. Copia el proyecto completo y crea la carpeta writable
 COPY . /var/www/html
-
-# Crear writable si no existe, asignar permisos al proyecto
 RUN mkdir -p /var/www/html/writable \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/writable
 
-
-# Establecer el directorio de trabajo
+# 7. Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# Exponer el puerto 8080
+# 8. Expone el puerto que usamos
 EXPOSE 8080
 
-# Iniciar Apache en primer plano
+# 9. Comando por defecto: arranca Apache en primer plano
 CMD ["apache2-foreground"]

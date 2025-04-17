@@ -1,31 +1,35 @@
-# Disable directory browsing
+# public/.htaccess
+
+# Deshabilita listado de carpetas
 Options -Indexes
 
-# ----------------------------------------------------------------------
-# Rewrite engine
-# ----------------------------------------------------------------------
 <IfModule mod_rewrite.c>
-    # Enable rewriting and follow symlinks
+    # Activa mod_rewrite y FollowSymlinks
     Options +FollowSymlinks
     RewriteEngine On
 
-    # Base URL (si lo tienes en un subdirectorio, ajústalo; por defecto es /)
-    RewriteBase /
+    # Si tu aplicación NO está en la raíz del dominio,
+    # descomenta y ajusta la siguiente línea:
+    # RewriteBase /mi-subcarpeta/
 
-    # Envía todas las peticiones que no sean archivos o carpetas reales a index.php
+    # Asegúrate de que Apache mire primero index.php
+    DirectoryIndex index.php
+
+    # Si la petición no es a un fichero o carpeta real,
+    # mándala al front-controller:
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php/$1 [L]
+    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
 
-    # Asegura que la cabecera Authorization se pase correctamente (para APIs, JWT, etc.)
+    # Pasa el header Authorization (para API/JWT si lo necesitas)
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
 
-# Si no hay mod_rewrite, envía los 404 a index.php (CodeIgniter los maneja internamente)
 <IfModule !mod_rewrite.c>
-    ErrorDocument 404 index.php
+    # Si no hay mod_rewrite, manda los 404 a index.php
+    ErrorDocument 404 /index.php
 </IfModule>
 
-# Oculta la versión del servidor
+# Oculta versión de Apache
 ServerSignature Off

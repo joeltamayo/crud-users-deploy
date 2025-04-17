@@ -11,78 +11,61 @@ class App extends BaseConfig
      * Base Site URL
      * --------------------------------------------------------------------------
      *
-     * URL to your CodeIgniter root. Typically, this will be your base URL,
-     * WITH a trailing slash:
-     *
-     * E.g., http://example.com/
+     * URL to your CodeIgniter root. Será calculada dinámicamente.
      */
     public string $baseURL = '';
-    public string $indexPage = '';
-
-    /**
-     * Constructor to set baseURL from environment variable
-     */
-    public bool $useDotEnv = true;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        // Construye automáticamente la URL base
-        $this->baseURL = env('app.baseURL') ?: 'http://localhost:8080/';
-    }
-
-
-    /**
-     * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
-     * If you want to accept multiple Hostnames, set this.
-     *
-     * @var list<string>
-     */
-    public array $allowedHostnames = [];
 
     /**
      * --------------------------------------------------------------------------
      * Index File
      * --------------------------------------------------------------------------
      *
-     * Typically, this will be your `index.php` file, unless you've renamed it to
-     * something else. If you have configured your web server to remove this file
-     * from your site URIs, set this variable to an empty string.
+     * Para URLs limpias (sin index.php)
      */
+    public string $indexPage = '';
 
     /**
      * --------------------------------------------------------------------------
-     * URI PROTOCOL
+     * Use .env
      * --------------------------------------------------------------------------
      *
-     * This item determines which server global should be used to retrieve the
-     * URI string. The default setting of 'REQUEST_URI' works for most servers.
-     * If your links do not seem to work, try one of the other delicious flavors:
-     *
-     *  'REQUEST_URI': Uses $_SERVER['REQUEST_URI']
-     * 'QUERY_STRING': Uses $_SERVER['QUERY_STRING']
-     *    'PATH_INFO': Uses $_SERVER['PATH_INFO']
-     *
-     * WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
+     * Lo mantenemos true para lectura de otras variables (.env), 
+     * pero NO usaremos env('app.baseURL') aquí.
      */
-    public string $uriProtocol = 'REQUEST_URI';
+    public bool $useDotEnv = true;
 
-    public string $permittedURIChars = 'a-z 0-9~%.:_\-';
+    /**
+     * --------------------------------------------------------------------------
+     * Constructor
+     * --------------------------------------------------------------------------
+     *
+     * Genera baseURL a partir de HTTPS y HTTP_HOST.
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-    public string $defaultLocale = 'en';
+        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                  ? 'https'
+                  : 'http';
 
-    public bool $negotiateLocale = false;
+        // Si HTTP_HOST no está definido (CLI/tests), usar localhost:8080 por defecto
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
 
-    public array $supportedLocales = ['en'];
+        // Normalizar para asegurarnos de que acaba en /
+        $this->baseURL = rtrim($scheme . '://' . $host, '/') . '/';
+    }
 
-    public string $appTimezone = 'UTC';
-
-    public string $charset = 'UTF-8';
-
-    public bool $forceGlobalSecureRequests = false;
-
-    public array $proxyIPs = [];
-
-    public bool $CSPEnabled = false;
+    // ... El resto de la configuración no cambia ...
+    public array $allowedHostnames = [];
+    public string $uriProtocol         = 'REQUEST_URI';
+    public string $permittedURIChars   = 'a-z 0-9~%.:_\-';
+    public string $defaultLocale       = 'en';
+    public bool   $negotiateLocale     = false;
+    public array  $supportedLocales    = ['en'];
+    public string $appTimezone         = 'UTC';
+    public string $charset             = 'UTF-8';
+    public bool   $forceGlobalSecureRequests = false;
+    public array  $proxyIPs            = [];
+    public bool   $CSPEnabled          = false;
 }
