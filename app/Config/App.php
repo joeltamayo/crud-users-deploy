@@ -10,8 +10,8 @@ class App extends BaseConfig
      * --------------------------------------------------------------------------
      * Base Site URL
      * --------------------------------------------------------------------------
-     *
-     * URL to your CodeIgniter root. Será calculada dinámicamente.
+     * Puedes definir esta URL en tu entorno con `app.baseURL`
+     * En Railway, asegúrate de tener esa variable definida.
      */
     public string $baseURL = '';
 
@@ -19,8 +19,6 @@ class App extends BaseConfig
      * --------------------------------------------------------------------------
      * Index File
      * --------------------------------------------------------------------------
-     *
-     * Para URLs limpias (sin index.php)
      */
     public string $indexPage = '';
 
@@ -28,9 +26,6 @@ class App extends BaseConfig
      * --------------------------------------------------------------------------
      * Use .env
      * --------------------------------------------------------------------------
-     *
-     * Lo mantenemos true para lectura de otras variables (.env), 
-     * pero NO usaremos env('app.baseURL') aquí.
      */
     public bool $useDotEnv = true;
 
@@ -38,25 +33,34 @@ class App extends BaseConfig
      * --------------------------------------------------------------------------
      * Constructor
      * --------------------------------------------------------------------------
-     *
-     * Genera baseURL a partir de HTTPS y HTTP_HOST.
      */
     public function __construct()
     {
         parent::__construct();
 
-        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-                  ? 'https'
-                  : 'http';
+        // Detectar si viene de proxy HTTPS (como Railway)
+        if (
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+        ) {
+            $_SERVER['HTTPS'] = 'on';
+        }
 
-        // Si HTTP_HOST no está definido (CLI/tests), usar localhost:8080 por defecto
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
+        // Obtener baseURL desde variable de entorno (definida como app.baseURL en Railway)
+        $base = env('app.baseURL');
 
-        // Normalizar para asegurarnos de que acaba en /
-        $this->baseURL = rtrim($scheme . '://' . $host, '/') . '/';
+        if ($base) {
+            $this->baseURL = rtrim($base, '/') . '/';
+        } else {
+            $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
+            $this->baseURL = rtrim("{$scheme}://{$host}", '/') . '/';
+        }
     }
 
-    // ... El resto de la configuración no cambia ...
+    // --------------------------------------
+    // El resto no cambia
+    // --------------------------------------
     public array $allowedHostnames = [];
     public string $uriProtocol         = 'REQUEST_URI';
     public string $permittedURIChars   = 'a-z 0-9~%.:_\-';
@@ -65,7 +69,12 @@ class App extends BaseConfig
     public array  $supportedLocales    = ['en'];
     public string $appTimezone         = 'UTC';
     public string $charset             = 'UTF-8';
-    public bool   $forceGlobalSecureRequests = false;
+
+    /**
+     * Forzar uso de HTTPS en todas las peticiones
+     */
+    public bool   $forceGlobalSecureRequests = true;
+
     public array  $proxyIPs            = [];
     public bool   $CSPEnabled          = false;
 }
