@@ -14,17 +14,15 @@ class User extends BaseController
         if ($this->request->getMethod() === 'POST') {
             $email = $this->request->getPost('email');
 
-            // Verificar si el correo ya existe en la base de datos
+            // Verificar si el correo ya existe
             $existingUser = $userModel->where('email', $email)->first();
 
             if ($existingUser) {
-                // Redirigir de vuelta con un mensaje de error flash
                 return redirect()->back()
                     ->withInput()
                     ->with('error', 'El correo ya está registrado.');
             }
 
-            // Si no existe, procede a guardar el nuevo usuario
             $data = [
                 'username' => $this->request->getPost('username'),
                 'email' => $email,
@@ -44,13 +42,13 @@ class User extends BaseController
     public function edit($id)
     {
         $userModel = new UserModel();
-        $user = $userModel->find($id); // Buscar el usuario por ID
+        $user = $userModel->find($id);
 
         if (!$user) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Usuario no encontrado');
+            return redirect()->to(base_url('user/list'))
+                ->with('error', 'Usuario no encontrado.');
         }
 
-        // Verifica si el formulario fue enviado
         if ($this->request->getMethod() === 'POST') {
             $data = [
                 'id' => $id,
@@ -58,27 +56,24 @@ class User extends BaseController
                 'email' => $this->request->getPost('email'),
             ];
 
-            // Si se proporcionó una nueva contraseña, se agrega
             if ($this->request->getPost('password')) {
                 $data['password'] = $this->request->getPost('password');
             }
 
-            // Actualiza los datos en la base de datos
             $userModel->save($data);
 
-            // Redirige al listado de usuarios
-            return redirect()->to(base_url('user/list'));
+            return redirect()->to(base_url('user/list'))
+                ->with('success', 'Usuario actualizado correctamente.');
         }
 
-        // Muestra la vista de edición con los datos del usuario
         return view('user/edit', ['user' => $user]);
     }
 
-    // Mostar usuarios
+    // Mostrar usuarios
     public function list()
     {
         $userModel = new UserModel();
-        $users = $userModel->findAll(); // Obtener todos los usuarios
+        $users = $userModel->findAll();
         return view('user/list', ['users' => $users]);
     }
 
@@ -86,22 +81,27 @@ class User extends BaseController
     public function delete($id)
     {
         $userModel = new UserModel();
-        $userModel->delete($id); // Eliminar el usuario por ID
-        return redirect()->to(base_url('user/list')); // Redirige al listado
+        $user = $userModel->find($id);
+
+        if (!$user) {
+            return redirect()->to(base_url('user/list'))->with('error', 'El usuario no existe.');
+        }
+
+        $userModel->delete($id);
+
+        return redirect()->to(base_url('user/list'))->with('success', 'Usuario eliminado correctamente.');
     }
 
 
     public function details($id)
     {
-
         $userModel = new UserModel();
-        $user = $userModel->find($id); // Buscar el usuario por ID
+        $user = $userModel->find($id);
 
         if (!$user) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Usuario no encontrado');
         }
 
-        // Muestra la vista con los datos
         return view('user/details', ['user' => $user]);
     }
 }

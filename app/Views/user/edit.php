@@ -8,6 +8,15 @@
     <div class="col-11 col-sm-12 col-md-8 col-lg-6 bg-white shadow-lg rounded p-4">
         <h2 class="text-center mb-4">Editar usuario</h2>
 
+        <!-- Mensajes flash -->
+        <?php if (session()->getFlashdata('success')) : ?>
+            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
+
         <form action="<?= base_url('user/edit/' . $user['id']) ?>" method="POST">
             <?= csrf_field(); ?>
 
