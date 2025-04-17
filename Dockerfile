@@ -20,6 +20,9 @@ RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf \
 # Copia todo el proyecto
 COPY . /var/www/html
 
+RUN chown -R www-data:www-data /var/www/html/writable \
+    && chmod -R 775 /var/www/html/writable
+
 # Asignar permisos
 RUN chown -R www-data:www-data /var/www/html
 
