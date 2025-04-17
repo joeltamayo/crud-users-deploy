@@ -5,38 +5,27 @@ Options -Indexes
 # Rewrite engine
 # ----------------------------------------------------------------------
 <IfModule mod_rewrite.c>
-    # Enabling FollowSymlinks (necessary for rewrites)
+    # Enable rewriting and follow symlinks
     Options +FollowSymlinks
     RewriteEngine On
 
-    # If you installed CodeIgniter in a subfolder, uncomment and set the correct RewriteBase
-    # If your app is not in a subfolder, you can leave this commented.
-    # RewriteBase /subfolder/
+    # Base URL (si lo tienes en un subdirectorio, ajústalo; por defecto es /)
+    RewriteBase /
 
-    # Redirect trailing slashes to remove them from URLs
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # Rewrite "www.example.com" to "example.com" (if needed)
-    RewriteCond %{HTTPS} !=on
-    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-    RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
-
-    # Send all requests to index.php if it's not a real file or directory
+    # Envía todas las peticiones que no sean archivos o carpetas reales a index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php/$1 [L]
 
-    # Ensure Authorization header is passed along
+    # Asegura que la cabecera Authorization se pase correctamente (para APIs, JWT, etc.)
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
 
-# If mod_rewrite is not available, send all 404 errors to index.php (CodeIgniter will handle the routing)
+# Si no hay mod_rewrite, envía los 404 a index.php (CodeIgniter los maneja internamente)
 <IfModule !mod_rewrite.c>
     ErrorDocument 404 index.php
 </IfModule>
 
-# Disable server signature to hide server version information
+# Oculta la versión del servidor
 ServerSignature Off
